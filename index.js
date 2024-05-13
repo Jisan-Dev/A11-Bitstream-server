@@ -27,6 +27,7 @@ async function run() {
   try {
     const blogsCollection = client.db('BitsreamDB').collection('blogs');
     const wishlistCollection = client.db('BitsreamDB').collection('wishlist');
+    const commentCollection = client.db('BitsreamDB').collection('comment');
 
     app.get('/blogs', async (req, res) => {
       const cursor = blogsCollection.find({});
@@ -52,6 +53,18 @@ async function run() {
       if (alreadyExists) return res.send({ message: 'Already bookmarked' });
 
       const result = await wishlistCollection.insertOne(blogData);
+      res.send(result);
+    });
+
+    app.get('/comments/:id', async (req, res) => {
+      const id = req.params.id;
+      const comments = await commentCollection.find({ blogId: id }).toArray();
+      res.send(comments);
+    });
+
+    app.post('/add-comment', async (req, res) => {
+      const commentData = req.body;
+      const result = await commentCollection.insertOne(commentData);
       res.send(result);
     });
 
