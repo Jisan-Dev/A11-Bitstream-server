@@ -11,6 +11,8 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
+app.use(cors(corsOptions));
+app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.chn7ebi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -23,8 +25,15 @@ const client = new MongoClient(uri, {
 });
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    const blogsCollection = client.db('BitsreamDB').collection('blogs');
+
+    app.post('/add-blog', async (req, res) => {
+      const blogData = req.body;
+      const result = await blogsCollection.insertOne(blogData);
+      console.log(result);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
@@ -39,6 +48,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-app.use(cors(corsOptions));
-app.use(express.json());
