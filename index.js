@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const blogsCollection = client.db('BitsreamDB').collection('blogs');
+    const wishlistCollection = client.db('BitsreamDB').collection('wishlist');
 
     app.get('/blogs', async (req, res) => {
       const cursor = blogsCollection.find({});
@@ -42,6 +43,12 @@ async function run() {
     app.post('/add-blog', async (req, res) => {
       const blogData = req.body;
       const result = await blogsCollection.insertOne(blogData);
+      res.send(result);
+    });
+
+    app.post('/add-wishlist', async (req, res) => {
+      const blogData = req.body;
+      const result = await wishlistCollection.insertOne(blogData);
       res.send(result);
     });
 
