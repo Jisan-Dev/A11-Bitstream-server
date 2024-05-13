@@ -48,6 +48,9 @@ async function run() {
 
     app.post('/add-wishlist', async (req, res) => {
       const blogData = req.body;
+      const alreadyExists = await wishlistCollection.findOne({ savedEmail: blogData.savedEmail });
+      if (alreadyExists) return res.send({ message: 'Already bookmarked' });
+
       const result = await wishlistCollection.insertOne(blogData);
       res.send(result);
     });
