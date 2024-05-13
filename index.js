@@ -27,10 +27,16 @@ async function run() {
   try {
     const blogsCollection = client.db('BitsreamDB').collection('blogs');
 
+    app.get('/blogs', async (req, res) => {
+      const cursor = blogsCollection.find({});
+      const blogs = await cursor.toArray();
+      console.log(blogs);
+      res.send(blogs);
+    });
+
     app.post('/add-blog', async (req, res) => {
       const blogData = req.body;
       const result = await blogsCollection.insertOne(blogData);
-      console.log(result);
       res.send(result);
     });
 
