@@ -55,6 +55,12 @@ async function run() {
       res.send(blogs);
     });
 
+    app.get('/wishlist', async (req, res) => {
+      const email = req.query?.email;
+      const blogs = await wishlistCollection.find({ savedEmail: email }).toArray();
+      res.send(blogs);
+    });
+
     app.post('/add-blog', async (req, res) => {
       const blogData = req.body;
       const result = await blogsCollection.insertOne(blogData);
@@ -70,7 +76,7 @@ async function run() {
 
     app.post('/add-wishlist', async (req, res) => {
       const blogData = req.body;
-      const alreadyExists = await wishlistCollection.findOne({ savedEmail: blogData.savedEmail });
+      const alreadyExists = await wishlistCollection.findOne({ savedEmail: blogData.savedEmail, mainBlogId: blogData.mainBlogId });
       if (alreadyExists) return res.send({ message: 'Already bookmarked' });
 
       const result = await wishlistCollection.insertOne(blogData);
