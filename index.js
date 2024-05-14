@@ -41,6 +41,20 @@ async function run() {
       res.send(blog);
     });
 
+    // get all blogs by filter & search
+    app.get('/all-blogs', async (req, res) => {
+      const filter = req.query?.filter;
+      const search = req.query?.search;
+
+      let query = {
+        blog_title: { $regex: search, $options: 'i' },
+      };
+      if (filter) query.category = filter;
+      const blogs = await blogsCollection.find(query).toArray();
+      console.log(blogs);
+      res.send(blogs);
+    });
+
     app.post('/add-blog', async (req, res) => {
       const blogData = req.body;
       const result = await blogsCollection.insertOne(blogData);
