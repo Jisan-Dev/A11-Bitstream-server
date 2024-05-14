@@ -61,6 +61,17 @@ async function run() {
         .send({ success: true });
     });
 
+    app.post('/logout', async (req, res) => {
+      res
+        .clearCookie('token', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+          maxAge: 0,
+        })
+        .send({ success: true });
+    });
+
     app.get('/blogs', async (req, res) => {
       const cursor = blogsCollection.find({});
       const blogs = await cursor.toArray();
