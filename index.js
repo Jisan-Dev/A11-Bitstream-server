@@ -20,9 +20,9 @@ app.use(cookieParser());
 // verify jwt middleware
 const verifyToken = (req, res, next) => {
   const token = req.cookies?.token;
-  if (!token) return res.status(401).send({ message: 'Not Authorized' });
+  if (!token) return res.status(401).send({ message: 'Not Authorizedd' });
 
-  jwt.verifyToken(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).send({ message: 'Not Authorized' });
@@ -51,6 +51,7 @@ async function run() {
     // generate jwt
     app.post('/jwt', async (req, res) => {
       const user = req.body;
+      console.log('first', user);
       const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '365d' });
       res
         .cookie('token', token, {
@@ -78,7 +79,11 @@ async function run() {
       res.send(blogs);
     });
 
-    app.get('/blogs/:id', async (req, res) => {
+    app.get('/blogs/:id', verifyToken, async (req, res) => {
+      if (req.query?.email !== req.decodedUser?.email) {
+        console.log('dhuikke2', req.query?.email, req.decodedUser?.email);
+        return res.status(403).send({ message: 'Forbidden Access' });
+      }
       const id = req.params.id;
       const blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
       res.send(blog);
@@ -98,7 +103,11 @@ async function run() {
       res.send(blogs);
     });
 
-    app.get('/wishlist', async (req, res) => {
+    app.get('/wishlist', verifyToken, async (req, res) => {
+      if (req.query?.email !== req.decodedUser?.email) {
+        console.log('dhuikke', req.query?.email, req.decodedUser?.email);
+        return res.status(403).send({ message: 'Forbidden Access' });
+      }
       const email = req.query?.email;
       const blogs = await wishlistCollection.find({ savedEmail: email }).toArray();
       res.send(blogs);
