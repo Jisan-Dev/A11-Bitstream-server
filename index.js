@@ -61,6 +61,12 @@ async function run() {
       res.send(blogs);
     });
 
+    app.get('/featured', async (req, res) => {
+      const options = { sort: { wordCount: -1 } };
+      const result = await blogsCollection.find({}, options).toArray();
+      res.send(result);
+    });
+
     app.post('/add-blog', async (req, res) => {
       const blogData = req.body;
       const result = await blogsCollection.insertOne(blogData);
