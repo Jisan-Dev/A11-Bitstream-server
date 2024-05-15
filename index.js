@@ -74,7 +74,13 @@ async function run() {
     });
 
     app.get('/blogs', async (req, res) => {
-      const cursor = blogsCollection.find({});
+      const cursor = blogsCollection.find({}, { sort: { postedTime: -1 } });
+      const blogs = await cursor.toArray();
+      res.send(blogs);
+    });
+
+    app.get('/recent-blogs', async (req, res) => {
+      const cursor = blogsCollection.find({}, { sort: { postedTime: -1 } }).limit(6);
       const blogs = await cursor.toArray();
       res.send(blogs);
     });
