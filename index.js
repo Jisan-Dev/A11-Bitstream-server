@@ -74,7 +74,7 @@ async function run() {
     });
 
     app.get('/blogs', async (req, res) => {
-      const cursor = blogsCollection.find({}, { sort: { postedTime: -1 } });
+      const cursor = blogsCollection.find({});
       const blogs = await cursor.toArray();
       res.send(blogs);
     });
@@ -86,10 +86,10 @@ async function run() {
     });
 
     app.get('/blogs/:id', verifyToken, async (req, res) => {
-      if (req.query?.email !== req.decodedUser?.email) {
-        console.log('dhuikke2', req.query?.email, req.decodedUser?.email);
-        return res.status(403).send({ message: 'Forbidden Access' });
-      }
+      // if (req.query?.email !== req.decodedUser?.email) {
+      //   console.log('dhuikke2', req.query?.email, req.decodedUser?.email);
+      //   return res.status(403).send({ message: 'Forbidden Access' });
+      // }
       const id = req.params.id;
       const blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
       res.send(blog);
