@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 
 const corsOptions = {
-  origin: ['http://localhost:5173'],
+  origin: ['http://localhost:5173', 'https://bitsream-a3982.web.app', 'https://bitsream-a3982.firebaseapp.com'],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -160,7 +160,7 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 });
+    // await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
   } finally {
   }
